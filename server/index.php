@@ -23,6 +23,7 @@ $app->delete('/gs/users', 'UserManager:batchDelete');
 $app->delete('/users', 'UserManager:delete');
 $app->get('/validate/email/{token}', 'EmailValidator:validate')->setName('validateEmail');
 $app->get('/status', 'Status:status');
+$app->get('/instances', 'UserManager:getInstances');
 
 $app->get('/replication', 'Replication:export');
 
