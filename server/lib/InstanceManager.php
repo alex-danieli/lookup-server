@@ -103,6 +103,8 @@ class InstanceManager {
 		foreach ($instances as $instance) {
 			$this->insert($instance);
 		}
+
+		$this->removeDeprecatedInstances($instances);
 	}
 
 
@@ -144,6 +146,45 @@ class InstanceManager {
 		$output = str_replace('_', '\_', $output);
 
 		return $output;
+	}
+
+
+	/**
+	 * @param string $cloudId
+	 */
+	public function newUser(string $cloudId): void {
+		list(, $instance) = explode('@', $cloudId, 2);
+		$this->insert($instance);
+	}
+
+
+	/**
+	 * @param string $cloudId
+	 */
+	public function removeUser(string $cloudId): void {
+		list(, $instance) = explode('@', $cloudId, 2);
+		$search = '%@' . $this->escapeWildcard($instance);
+
+		$stmt = $this->db->prepare('SELECT federationId FROM users WHERE federationId LIKE :search');
+		$stmt->bindParam(':search', $search);
+		$stmt->execute();
+		if ($stmt->fetch() === false) {
+			$this->remove($instance);
+		}
+	}
+
+
+	/**
+	 * @param array $instances
+	 */
+	private function removeDeprecatedInstances(array $instances): void {
+		$current = $this->getAll();
+
+		foreach ($current as $item) {
+			if (!in_array($item, $instances)) {
+				$this->remove($item);
+			}
+		}
 	}
 
 }

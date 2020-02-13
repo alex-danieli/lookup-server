@@ -22,6 +22,9 @@ class UserManager {
 	/** @var Twitter */
 	private $twitterValidator;
 
+	/** @var InstanceManager */
+	private $instanceManager;
+
 	/** @var SignatureHandler */
 	private $signatureHandler;
 
@@ -49,6 +52,7 @@ class UserManager {
 								Email $emailValidator,
 								Website $websiteValidator,
 								Twitter $twitterValidator,
+								InstanceManager $instanceManager,
 								SignatureHandler $signatureHandler,
 								$globalScaleMode,
 								$authKey) {
@@ -56,6 +60,7 @@ class UserManager {
 		$this->emailValidator = $emailValidator;
 		$this->websiteValidator = $websiteValidator;
 		$this->twitterValidator = $twitterValidator;
+		$this->instanceManager = $instanceManager;
 		$this->signatureHandler = $signatureHandler;
 		$this->globalScaleMode = $globalScaleMode;
 		$this->authKey = $authKey;
@@ -263,6 +268,8 @@ LIMIT :limit');
 				$this->emailValidator->emailUpdated($data[$field], $storeId);
 			}
 		}
+
+		$this->instanceManager->newUser($cloudId);
 	}
 
 	/**
@@ -632,6 +639,8 @@ LIMIT :limit');
 		$stmt->bindParam(':userId', $row['id']);
 		$stmt->execute();
 		$stmt->closeCursor();
+
+		$this->instanceManager->removeUser($cloudId);
 
 		return true;
 	}

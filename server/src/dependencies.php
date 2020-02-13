@@ -12,7 +12,7 @@ $container['InstanceManager'] = function($c) {
 	return new \LookupServer\InstanceManager($c->db);
 };
 $container['UserManager'] = function($c) {
-	return new \LookupServer\UserManager($c->db, $c->EmailValidator, $c->WebsiteValidator, $c->TwitterValidator, $c->SignatureHandler, $c['settings']['global_scale'], $c['settings']['auth_key']);
+	return new \LookupServer\UserManager($c->db, $c->EmailValidator, $c->WebsiteValidator, $c->TwitterValidator, $c->InstanceManager, $c->SignatureHandler, $c['settings']['global_scale'], $c['settings']['auth_key']);
 };
 $container['SignatureHandler'] = function($c) {
 	return new \LookupServer\SignatureHandler();
