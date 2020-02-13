@@ -8,6 +8,9 @@ $container['db'] = function($c) {
 	$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 	return $pdo;
 };
+$container['InstanceManager'] = function($c) {
+	return new \LookupServer\InstanceManager($c->db);
+};
 $container['UserManager'] = function($c) {
 	return new \LookupServer\UserManager($c->db, $c->EmailValidator, $c->WebsiteValidator, $c->TwitterValidator, $c->SignatureHandler, $c['settings']['global_scale'], $c['settings']['auth_key']);
 };
@@ -45,3 +48,7 @@ $container['Status'] = function($c) {
 $container['Replication'] = function ($c) {
 	return new \LookupServer\Replication($c->db, $c->settings['replication_auth'], $c->settings['replication_hosts']);
 };
+
+
+//$container['InstanceRemove'] = new \LookupServer\Console\InstanceRemove();
+//};

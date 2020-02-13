@@ -231,35 +231,6 @@ LIMIT :limit');
 	}
 
 
-
-	/**
-	 * let Nextcloud servers obtains the full list of registered instances in the global scale scenario
-	 *
-	 * @param Request $request
-	 * @param Response $response
-	 *
-	 * @return Response
-	 */
-	public function getInstances(Request $request, Response $response): Response {
-		$stmt = $this->db->prepare('SELECT federationId FROM users');
-		$stmt->execute();
-		$instances = [];
-		while ($data = $stmt->fetch()) {
-			list(, $instance) = explode('@', $data['federationId'], 2);
-			if (!in_array($instance, $instances)) {
-				$instances[] = $instance;
-			}
-		}
-		$stmt->closeCursor();
-
-		$response->getBody()
-				 ->write(json_encode($instances));
-
-		return $response;
-	}
-
-
-	
 	/**
 	 * @param string $cloudId
 	 * @param string[] $data
