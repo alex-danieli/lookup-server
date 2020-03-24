@@ -6,6 +6,15 @@ use Slim\Container;
 use Symfony\Component\Console\Application;
 
 
+$user = posix_getpwuid(posix_getuid());
+$configUser = posix_getpwuid(fileowner(__DIR__ . '/src/config.php'));
+if ($user['name'] !== $configUser['name']) {
+	echo "Console has to be executed with the user that owns the file 'src/config.php'" . PHP_EOL;
+	echo "Current user: " . $user['name'] . PHP_EOL;
+	echo "Owner of config.php: " . $configUser['name'] . PHP_EOL;
+	exit(1);
+}
+
 require __DIR__ . '/vendor/autoload.php';
 $settings = require __DIR__ . '/src/config.php';
 $container = new Container($settings);
