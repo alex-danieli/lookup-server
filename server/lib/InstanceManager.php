@@ -129,11 +129,34 @@ class InstanceManager {
 	 */
 	private function removeUsers(string $instance) {
 		$search = '%@' . $this->escapeWildcard($instance);
-		$stmt = $this->db->prepare('DELETE FROM users WHERE federationId LIKE :search');
+		$stmt = $this->db->prepare('SELECT id FROM users WHERE federationId LIKE :search');
 		$stmt->bindParam(':search', $search);
 		$stmt->execute();
+
+		while ($data = $stmt->fetch()) {
+			$this->removeUser($data['id']);
+		}
+
 		$stmt->closeCursor();
+		$this->removingEmptyInstance($instance);
 	}
+
+
+	/**
+	 * @param int $userId
+	 */
+	private function removeUser(int $userId) {
+		$stmt = $this->db->prepare('DELETE FROM users WHERE id = :id');
+		$stmt->bindParam(':id', $userId);
+		$stmt->execute();
+
+		$stmt = $this->db->prepare('DELETE FROM store WHERE userId = :id');
+		$stmt->bindParam(':id', $userId);
+		$stmt->execute();
+	}
+
+
+
 
 
 	/**
@@ -161,8 +184,17 @@ class InstanceManager {
 	/**
 	 * @param string $cloudId
 	 */
-	public function removeUser(string $cloudId): void {
+	public function removingUser(string $cloudId): void {
 		list(, $instance) = explode('@', $cloudId, 2);
+
+		$this->removingEmptyInstance($instance);
+	}
+
+
+	/**
+	 * @param string $instance
+	 */
+	private function removingEmptyInstance(string $instance) {
 		$search = '%@' . $this->escapeWildcard($instance);
 
 		$stmt = $this->db->prepare('SELECT federationId FROM users WHERE federationId LIKE :search');

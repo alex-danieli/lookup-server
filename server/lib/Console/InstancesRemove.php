@@ -35,7 +35,7 @@ class InstancesRemove extends Command {
 	 */
 	protected function configure() {
 		$this->setDescription('Remove an instance from the list');
-		$this->addOption('all', 'a', InputOption::VALUE_NONE, 'remove also users from the instance')
+		$this->addOption('users', '', InputOption::VALUE_NONE, 'remove also users from the instance')
 			 ->addArgument('instance', InputArgument::REQUIRED, 'instance to remove');
 	}
 
@@ -48,7 +48,7 @@ class InstancesRemove extends Command {
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$instance = $input->getArgument('instance');
-		$this->instanceManager->remove($instance, $input->getOption('all'));
+		$this->instanceManager->remove($instance, $input->getOption('users'));
 
 		return 0;
 	}

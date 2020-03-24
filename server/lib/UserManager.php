@@ -640,7 +640,7 @@ LIMIT :limit');
 		$stmt->execute();
 		$stmt->closeCursor();
 
-		$this->instanceManager->removeUser($cloudId);
+		$this->instanceManager->removingUser($cloudId);
 
 		return true;
 	}
